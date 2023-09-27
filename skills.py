@@ -4,9 +4,8 @@ import pandas as pd
 
 # setup(backend='mpmath')
 ## FrontEnd information needed for the app
-matching_info = {
-    'random_player_id': 'player6',
-    'skillbased_player_id': 'player4'
+match_info = {
+    'player_id': 'player4',
 }
 result_info = {
     'player3':'win',
@@ -21,12 +20,12 @@ df = pd.read_csv('data.csv')
 # print(df)
 
 
-def random_match(player_id):
+def random_match(player2match,db):
     matches = []
-    players = [key for key in df.players]
+    players = [key for key in db.player_id]
 
     while len(matches) < len(players)-1:
-        player1 = player_id
+        player1 = player2match
         player2 = random.choice(players)
 
         # Ensure that player1 and player2 are not the same and have not been matched before
@@ -35,32 +34,37 @@ def random_match(player_id):
 
     return matches
 
-# print(random_match(matching_info['random_player_id']))
 
-def skill_matching(df):
-    df = df.set_index(['players'])
-    player2match = matching_info['skillbased_player_id']
-    players = [i for i in df.index if i != player2match]
-    matches = list()
+player2match = match_info['player_id']
 
-    for player in players:
-        player_skill,player_conf = df.at[player,'skill_level'],df.at[player,'conf']
-        player_rating = Rating(mu=player_skill, sigma=player_conf)
-        player2match_skill,player2match_conf = df.at[player2match,'skill_level'],df.at[player2match,'conf']
-        player2match_rating = Rating(mu=player2match_skill, sigma=player2match_conf)
+def skill_match(player2match,db):
+    db = db.set_index(['player_id'])
+    # player2match = matching_info['skillbased_player_id']
+    try:
+        players = [i for i in db.index if i != player2match]
+        matches = list()
 
-        if quality_1vs1(player2match_rating,player_rating)>0.5 : 
-            matches.append((player2match,player))
+        for player in players:
+            player_skill,player_conf = db.at[player,'skill_level'],db.at[player,'conf']
+            player_rating = Rating(mu=player_skill, sigma=player_conf)
+            player2match_skill,player2match_conf = db.at[player2match,'skill_level'],db.at[player2match,'conf']
+            player2match_rating = Rating(mu=player2match_skill, sigma=player2match_conf)
+
+            if quality_1vs1(player2match_rating,player_rating)>0.5 : 
+                matches.append((player2match,player))
+                
+            else:
+                pass
+        return matches
+    except:
+        print('Enter correct username')
             
-        else:
-            pass
-            
-    return matches
     
-print(skill_matching(df))
+    
+# print(skill_match(player2match,df))
 
 def update_player_ratings(match_results,df):
-    df = df.set_index(['players'])
+    df = df.set_index(['player_id'])
     p1_skill,p1_conf = df.at[match_player1,'skill_level'],df.at[match_player1,'conf']
     p1_rating = Rating(mu=p1_skill, sigma=int(p1_conf))
     p2_skill,p2_conf = df.at[match_player2,'skill_level'],df.at[match_player2,'conf']
