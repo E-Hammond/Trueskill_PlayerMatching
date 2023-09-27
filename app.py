@@ -1,6 +1,6 @@
 import streamlit as st
 import base64
-from skills import random_match,skill_match,update_player_ratings
+from skills import *
 import pandas as pd
 
 
