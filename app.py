@@ -16,7 +16,7 @@ def set_bg_hack(main_bg):
         unsafe_allow_html=True
     )
 
-set_bg_hack('/home/emmanuel/Documents/FAKER/Match_Dennis/Trueskill_PlayerMatching/pexels-roman-odintsov-12718982.jpg')
+set_bg_hack('pexels-roman-odintsov-12718982.jpg')
 
 st.markdown(f'<h1 style="color:#F65454;font-size:40px;margin-left:100px">{"PLAYER MATCHING APP"}</h1>',
                 unsafe_allow_html=True)
